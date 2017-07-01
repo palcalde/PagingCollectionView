@@ -29,9 +29,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         layout.minimumLineSpacing = 0
 
         let windowWidth: CGFloat = 374
-        let pageSize: CGFloat = 300
+        let pageSize: CGFloat = 250
         layout.itemSize = CGSize(width: pageSize, height: collectionView.frame.height)
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: (windowWidth-pageSize)/2, bottom: 0, right: (windowWidth-pageSize)/2)
+//        collectionView.contentInset = UIEdgeInsets(top: 0, left: (windowWidth-pageSize)/2, bottom: 0, right: (windowWidth-pageSize)/2)
+
+        layout.sectionInset = UIEdgeInsets(top: 0, left: (windowWidth-pageSize)/2, bottom: 0, right: (windowWidth-pageSize)/2)
 
         view.addSubview(scrollView)
         scrollView.contentSize = CGSize(width: pageSize * 5, height: collectionView.frame.height)
@@ -41,6 +43,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         scrollView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor).isActive = true
         scrollView.leftAnchor.constraint(equalTo: collectionView.leftAnchor).isActive = true
         scrollView.widthAnchor.constraint(equalToConstant: pageSize).isActive = true
+
+//        scrollView.contentInset = UIEdgeInsets(top: 0, left: (windowWidth-pageSize)/2, bottom: 0, right: (windowWidth-pageSize)/2)
 
         scrollView.isHidden = true
 
@@ -56,7 +60,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (scrollView == self.scrollView) { //ignore collection view scrolling callbacks
-            collectionView.contentOffset = contentOffset;
+            collectionView.contentOffset = scrollView.contentOffset;
         } else {
             print("ignored scroll from collectionview")
         }

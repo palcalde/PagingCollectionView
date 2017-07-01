@@ -27,6 +27,7 @@
                     </imageView>
                 </subviews>
             </view>
+            <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
             <constraints>
                 <constraint firstItem="Wix-jE-n0Q" firstAttribute="centerY" secondItem="4Jj-TF-c9G" secondAttribute="centerY" id="eFF-QI-32F"/>
                 <constraint firstItem="Wix-jE-n0Q" firstAttribute="centerX" secondItem="4Jj-TF-c9G" secondAttribute="centerX" id="sOa-nZ-N7z"/>
