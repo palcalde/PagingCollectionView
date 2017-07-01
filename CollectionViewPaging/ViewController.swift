@@ -25,13 +25,15 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
-        
 
-        layout.itemSize = CGSize(width: view.frame.width, height: 100)
+        let windowWidth: CGFloat = 374
+        let pageSize: CGFloat = 300
+        layout.itemSize = CGSize(width: pageSize, height: collectionView.frame.height)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: (windowWidth-pageSize)/2, bottom: 0, right: (windowWidth-pageSize)/2)
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return 5
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

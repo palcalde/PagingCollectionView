@@ -14,5 +14,7 @@ class Cell: UICollectionViewCell {
 
     override func awakeFromNib() {
         image.image = UIImage.init(named: "vehicle.png")
+        layer.borderColor = UIColor.gray.cgColor
+        layer.borderWidth = 1
     }
 }
