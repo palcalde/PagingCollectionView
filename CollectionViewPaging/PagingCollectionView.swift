@@ -1,12 +1,19 @@
 import Foundation
 import UIKit
 
-class PagingCollectionView: UICollectionView, UICollectionViewDelegate {
+class PagingCollectionView: UIView, UICollectionViewDelegate {
     private let pagingScrollView = UIScrollView()
+    private let collectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
 
     var pageSize: CGFloat = 0 {
         didSet {
             didResize()
+        }
+    }
+
+    var dataSource: UICollectionViewDataSource? {
+        didSet {
+            collectionView.dataSource = dataSource
         }
     }
 
@@ -19,44 +26,57 @@ class PagingCollectionView: UICollectionView, UICollectionViewDelegate {
     }
 
     private var flowLayout: UICollectionViewFlowLayout {
-        return collectionViewLayout as! UICollectionViewFlowLayout
+        return collectionView.collectionViewLayout as! UICollectionViewFlowLayout
     }
 
     init(pageSize: CGFloat, scalePagingEffect: CGFloat = 0) {
         self.pageSize = pageSize
-        super.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
+        super.init(frame: CGRect.zero)
         configure()
     }
-    
+
+    func register(_ nib: UINib?, forCellWithReuseIdentifier identifier: String) {
+        collectionView.register(nib, forCellWithReuseIdentifier: identifier)
+    }
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         configure()
     }
 
     private func configure() {
-        delegate = self
+        collectionView.backgroundColor = UIColor.clear
+        
+        collectionView.delegate = self
 
-        isPagingEnabled = false
+        collectionView.isPagingEnabled = false
 
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.minimumLineSpacing = 0
 
         didResize()
 
+        addSubview(collectionView)
         addSubview(pagingScrollView)
 
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        collectionView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        collectionView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+
         pagingScrollView.translatesAutoresizingMaskIntoConstraints = false
-        pagingScrollView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        pagingScrollView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        pagingScrollView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        pagingScrollView.topAnchor.constraint(equalTo: collectionView.topAnchor).isActive = true
+        pagingScrollView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor).isActive = true
+        pagingScrollView.leftAnchor.constraint(equalTo: collectionView.leftAnchor).isActive = true
         pagingScrollView.widthAnchor.constraint(equalToConstant: pageSize).isActive = true
 
         pagingScrollView.isPagingEnabled = true
         pagingScrollView.delegate = self
         pagingScrollView.isUserInteractionEnabled = false
 
-        addGestureRecognizer(pagingScrollView.panGestureRecognizer)
-        panGestureRecognizer.isEnabled = false
+        collectionView.addGestureRecognizer(pagingScrollView.panGestureRecognizer)
+        collectionView.panGestureRecognizer.isEnabled = false
 
         contentMode = .redraw
     }
@@ -75,17 +95,17 @@ class PagingCollectionView: UICollectionView, UICollectionViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (scrollView == pagingScrollView) { //ignore collection view scrolling callbacks
-            contentOffset = pagingScrollView.contentOffset
+            collectionView.contentOffset = pagingScrollView.contentOffset
 
-            let rows = indexPathsForVisibleItems
+            let rows = collectionView.indexPathsForVisibleItems
             for indexPath in rows {
-                applyTransformToCell(cell: cellForItem(at: indexPath)!, indexPath: indexPath)
+                applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
             }
         }
     }
 
     private func applyTransformToCell(cell: UICollectionViewCell, indexPath: IndexPath) {
-        let scrollCenter = contentOffset.x + (frame.width/2)
+        let scrollCenter = collectionView.contentOffset.x + (frame.width/2)
 
         let collectionViewWidth = frame.width
         let offSetX = abs(scrollCenter - cell.center.x)

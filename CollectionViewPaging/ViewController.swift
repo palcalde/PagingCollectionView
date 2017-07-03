@@ -18,11 +18,12 @@ class ViewController: UIViewController, UICollectionViewDataSource {
         super.viewDidLoad()
 
         view.addSubview(collectionView)
+        
         collectionView.backgroundColor = UIColor.clear
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        collectionView.heightAnchor.constraint(equalToConstant: 300).isActive = true
+        collectionView.heightAnchor.constraint(equalToConstant: 150).isActive = true
         collectionView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
 
 //        collectionView.delegate = self
