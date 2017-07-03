@@ -61,7 +61,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             for indexPath in rows {
                 applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
             }
-
         }
     }
 
@@ -70,11 +69,12 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
         let collectionViewWidth = collectionView.frame.width
         let offSetX = abs(scrollCenter - cell.center.x)
-        let transformAmountToApply = (collectionViewWidth - offSetX) / collectionViewWidth
-        
-        cell.contentView.layer.sublayerTransform = CATransform3DMakeScale(transformAmountToApply, transformAmountToApply, 1)
+        let percetangeTransformToApply = (collectionViewWidth - offSetX) / collectionViewWidth
 
-        print("\(indexPath) transform applied \(transformAmountToApply)")
+        let scale: CGFloat = 0.7
+        let transformScaled = scale + (percetangeTransformToApply * (1.0-scale))
+        
+        cell.contentView.layer.sublayerTransform = CATransform3DMakeScale(transformScaled, transformScaled, 1)
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
