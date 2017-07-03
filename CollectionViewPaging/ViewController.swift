@@ -6,7 +6,7 @@
 //  Copyright © 2017 Cabify Rider v2. All rights reserved.
 //
 
-import UIKit
+ import UIKit
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
@@ -30,10 +30,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
         let windowWidth: CGFloat = 374
         let pageSize: CGFloat = 250
-        layout.itemSize = CGSize(width: pageSize, height: collectionView.frame.height)
-//        collectionView.contentInset = UIEdgeInsets(top: 0, left: (windowWidth-pageSize)/2, bottom: 0, right: (windowWidth-pageSize)/2)
 
-        layout.sectionInset = UIEdgeInsets(top: 0, left: (windowWidth-pageSize)/2, bottom: 0, right: (windowWidth-pageSize)/2)
+        layout.itemSize = CGSize(width: pageSize, height: collectionView.frame.height)
+        let padding = (windowWidth-pageSize)/2
+
+        layout.sectionInset = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
 
         view.addSubview(scrollView)
         scrollView.contentSize = CGSize(width: pageSize * 5, height: collectionView.frame.height)
@@ -44,26 +45,36 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         scrollView.leftAnchor.constraint(equalTo: collectionView.leftAnchor).isActive = true
         scrollView.widthAnchor.constraint(equalToConstant: pageSize).isActive = true
 
-//        scrollView.contentInset = UIEdgeInsets(top: 0, left: (windowWidth-pageSize)/2, bottom: 0, right: (windowWidth-pageSize)/2)
-
-        scrollView.isHidden = true
-
         scrollView.isPagingEnabled = true
         scrollView.delegate = self
+        scrollView.isUserInteractionEnabled = false
 
         collectionView.addGestureRecognizer(scrollView.panGestureRecognizer)
         collectionView.panGestureRecognizer.isEnabled = false
-
-        collectionView.layer.borderColor = UIColor.gray.cgColor
-        collectionView.layer.borderWidth = 1
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (scrollView == self.scrollView) { //ignore collection view scrolling callbacks
-            collectionView.contentOffset = scrollView.contentOffset;
-        } else {
-            print("ignored scroll from collectionview")
+            collectionView.contentOffset = scrollView.contentOffset
+
+            let rows = self.collectionView.indexPathsForVisibleItems
+            for indexPath in rows {
+                applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
+            }
+
         }
+    }
+
+    private func applyTransformToCell(cell: UICollectionViewCell, indexPath: IndexPath) {
+        let scrollCenter = collectionView.contentOffset.x + (collectionView.frame.width/2)
+
+        let collectionViewWidth = collectionView.frame.width
+        let offSetX = abs(scrollCenter - cell.center.x)
+        let transformAmountToApply = (collectionViewWidth - offSetX) / collectionViewWidth
+        
+        cell.contentView.layer.sublayerTransform = CATransform3DMakeScale(transformAmountToApply, transformAmountToApply, 1)
+
+        print("\(indexPath) transform applied \(transformAmountToApply)")
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -71,17 +82,19 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! Cell
+        cell.image.image = UIImage.init(named: "vehicle.png")
+        return cell
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("selected cell \(indexPath.row)")
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-
-
+    
+    
 }
 

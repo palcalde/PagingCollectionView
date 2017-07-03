@@ -199,6 +199,7 @@
 				TargetAttributes = {
 					6E682A121F082CB40048E90D = {
 						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = PS39UD34J6;
 						ProvisioningStyle = Automatic;
 					};
 					6E682A261F082CB40048E90D = {
@@ -422,6 +423,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = PS39UD34J6;
 				INFOPLIST_FILE = CollectionViewPaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = own.CollectionViewPaging;
@@ -434,6 +436,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = PS39UD34J6;
 				INFOPLIST_FILE = CollectionViewPaging/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = own.CollectionViewPaging;
