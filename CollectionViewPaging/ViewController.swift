@@ -10,25 +10,25 @@
 
 class ViewController: UIViewController, UICollectionViewDataSource {
 
-    let collectionView = PagingCollectionView.init(pageSize: 250)
+    let pager = HorizontalPagerView.init(pageSize: 250)
 
     private let scrollView = UIScrollView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.addSubview(collectionView)
+        view.addSubview(pager)
         
-        collectionView.backgroundColor = UIColor.clear
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        collectionView.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        collectionView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        pager.backgroundColor = UIColor.clear
+        pager.translatesAutoresizingMaskIntoConstraints = false
+        pager.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        pager.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        pager.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        pager.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
 
 //        collectionView.delegate = self
-        collectionView.register(UINib.init(nibName: "Cell", bundle: nil), forCellWithReuseIdentifier: "cell")
-        collectionView.dataSource = self
+        pager.register(UINib.init(nibName: "Cell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        pager.dataSource = self
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

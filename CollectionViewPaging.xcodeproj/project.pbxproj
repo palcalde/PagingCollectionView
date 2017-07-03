@@ -16,7 +16,7 @@
 		6E682A451F082DD30048E90D /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E682A441F082DD30048E90D /* Cell.swift */; };
 		6E682A471F082E540048E90D /* Cell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E682A461F082E540048E90D /* Cell.xib */; };
 		6EB7D0D41F08363100277175 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EB7D0D31F08363100277175 /* Media.xcassets */; };
-		6EE844261F0A5A47009C9ACE /* PagingCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE844251F0A5A47009C9ACE /* PagingCollectionView.swift */; };
+		6EE844261F0A5A47009C9ACE /* HorizontalPagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE844251F0A5A47009C9ACE /* HorizontalPagerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +52,7 @@
 		6E682A441F082DD30048E90D /* Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		6E682A461F082E540048E90D /* Cell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Cell.xib; sourceTree = "<group>"; };
 		6EB7D0D31F08363100277175 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
-		6EE844251F0A5A47009C9ACE /* PagingCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagingCollectionView.swift; sourceTree = "<group>"; };
+		6EE844251F0A5A47009C9ACE /* HorizontalPagerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalPagerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +111,7 @@
 				6E682A441F082DD30048E90D /* Cell.swift */,
 				6E682A461F082E540048E90D /* Cell.xib */,
 				6EB7D0D31F08363100277175 /* Media.xcassets */,
-				6EE844251F0A5A47009C9ACE /* PagingCollectionView.swift */,
+				6EE844251F0A5A47009C9ACE /* HorizontalPagerView.swift */,
 			);
 			path = CollectionViewPaging;
 			sourceTree = "<group>";
@@ -272,7 +272,7 @@
 			files = (
 				6E682A191F082CB40048E90D /* ViewController.swift in Sources */,
 				6E682A451F082DD30048E90D /* Cell.swift in Sources */,
-				6EE844261F0A5A47009C9ACE /* PagingCollectionView.swift in Sources */,
+				6EE844261F0A5A47009C9ACE /* HorizontalPagerView.swift in Sources */,
 				6E682A171F082CB40048E90D /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

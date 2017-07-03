@@ -1,9 +1,10 @@
 import Foundation
 import UIKit
 
-class PagingCollectionView: UIView, UICollectionViewDelegate {
+class HorizontalPagerView: UIView, UICollectionViewDelegate {
     private let pagingScrollView = UIScrollView()
-    private let collectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
+
+    let collectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
 
     var pageSize: CGFloat = 0 {
         didSet {
