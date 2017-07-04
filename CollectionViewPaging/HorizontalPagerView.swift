@@ -18,11 +18,11 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
         }
     }
 
-    // 1 is no effect at all, 0.1 is the biggest effect possible
-    // defaults to 0.7
-    var scalePagingEffect: CGFloat = 0.7 {
+    // Range from (0..1] of reducing scale amount to apply when paging
+    // Cell in the center will always have 1 (biggest)
+    var maxScaleToApply: CGFloat = 0.7 {
         didSet {
-            scalePagingEffect = min(max(scalePagingEffect, 0.1), 1.0)
+            maxScaleToApply = min(max(maxScaleToApply, 0.1), 1.0)
         }
     }
 
@@ -30,9 +30,12 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
         return collectionView.collectionViewLayout as! UICollectionViewFlowLayout
     }
 
-    init(pageSize: CGFloat, scalePagingEffect: CGFloat = 0) {
+    init(pageSize: CGFloat, maxScaleToApply: CGFloat = 0) {
         self.pageSize = pageSize
+        self.maxScaleToApply = maxScaleToApply
+
         super.init(frame: CGRect.zero)
+
         configure()
     }
 
@@ -42,6 +45,7 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+
         configure()
     }
 
@@ -74,7 +78,7 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
 
         pagingScrollView.isPagingEnabled = true
         pagingScrollView.delegate = self
-        pagingScrollView.isUserInteractionEnabled = false
+        pagingScrollView.isHidden = true
 
         collectionView.addGestureRecognizer(pagingScrollView.panGestureRecognizer)
         collectionView.panGestureRecognizer.isEnabled = false
@@ -95,13 +99,14 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (scrollView == pagingScrollView) { //ignore collection view scrolling callbacks
-            collectionView.contentOffset = pagingScrollView.contentOffset
+        //ignore collection view scrolling events
+        guard scrollView == pagingScrollView else { return }
 
-            let rows = collectionView.indexPathsForVisibleItems
-            for indexPath in rows {
-                applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
-            }
+        collectionView.contentOffset = pagingScrollView.contentOffset
+
+        let rows = collectionView.indexPathsForVisibleItems
+        for indexPath in rows {
+            applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
         }
     }
 
@@ -110,10 +115,15 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
 
         let collectionViewWidth = frame.width
         let offSetX = abs(scrollCenter - cell.center.x)
-        let percetangeTransformToApply = (collectionViewWidth - offSetX) / collectionViewWidth
 
-        let transformScaled = scalePagingEffect + (percetangeTransformToApply * (1.0 - scalePagingEffect))
+        let distanceFromCenter = (collectionViewWidth - offSetX) / collectionViewWidth
 
+        let amountToScale = (distanceFromCenter * (1.0 - maxScaleToApply))
+        let amountToScaleRounded = CGFloat(round(1000 * amountToScale) / 1000)
+
+        let transformScaled = maxScaleToApply + amountToScaleRounded
+
+        print("index \(indexPath) x is \(amountToScaleRounded) transformScaled \(maxScaleToApply) resulting in \(transformScaled)")
         cell.contentView.layer.sublayerTransform = CATransform3DMakeScale(transformScaled, transformScaled, 1)
     }
 

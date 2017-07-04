@@ -10,7 +10,7 @@
 
 class ViewController: UIViewController, UICollectionViewDataSource {
 
-    let pager = HorizontalPagerView.init(pageSize: 250)
+    let pager = HorizontalPagerView.init(pageSize: 250, maxScaleToApply: 0.5)
 
     private let scrollView = UIScrollView()
 
