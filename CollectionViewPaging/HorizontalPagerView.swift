@@ -18,6 +18,12 @@ class HorizontalPagerView: UIView {
         }
     }
 
+    var delegate: UICollectionViewDelegate? {
+        didSet {
+            collectionView.delegate = delegate
+        }
+    }
+
     // Range from (0..1] of reducing scale amount to apply when paging
     // Cell in the center will always have 1 (biggest)
     var maxScaleToApply: CGFloat = 0.7 {
