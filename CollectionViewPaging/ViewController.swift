@@ -8,7 +8,7 @@
 
  import UIKit
 
-class ViewController: UIViewController, UICollectionViewDataSource {
+class ViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
 
     let pager = HorizontalPagerView.init(pageSize: 250, maxScaleToApply: 0.5)
 
@@ -26,7 +26,7 @@ class ViewController: UIViewController, UICollectionViewDataSource {
         pager.heightAnchor.constraint(equalToConstant: 150).isActive = true
         pager.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
 
-//        collectionView.delegate = self
+        pager.collectionView.delegate = self
         pager.register(UINib.init(nibName: "Cell", bundle: nil), forCellWithReuseIdentifier: "cell")
         pager.dataSource = self
     }
@@ -47,7 +47,5 @@ class ViewController: UIViewController, UICollectionViewDataSource {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
-    
 }
 

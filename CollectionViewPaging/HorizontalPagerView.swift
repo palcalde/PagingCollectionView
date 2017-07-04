@@ -1,8 +1,8 @@
 import Foundation
 import UIKit
 
-class HorizontalPagerView: UIView, UICollectionViewDelegate {
-    private let pagingScrollView = UIScrollView()
+class HorizontalPagerView: UIView {
+    @objc private let pagingScrollView = UIScrollView()
 
     let collectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
 
@@ -49,11 +49,13 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
         configure()
     }
 
+    deinit {
+        removeObserver(self, forKeyPath: #keyPath(pagingScrollView.contentOffset))
+    }
+
     private func configure() {
         collectionView.backgroundColor = UIColor.clear
         
-        collectionView.delegate = self
-
         collectionView.isPagingEnabled = false
 
         flowLayout.minimumInteritemSpacing = 0
@@ -77,13 +79,25 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
         pagingScrollView.widthAnchor.constraint(equalToConstant: pageSize).isActive = true
 
         pagingScrollView.isPagingEnabled = true
-        pagingScrollView.delegate = self
         pagingScrollView.isHidden = true
 
         collectionView.addGestureRecognizer(pagingScrollView.panGestureRecognizer)
         collectionView.panGestureRecognizer.isEnabled = false
 
+        addObserver(self, forKeyPath: #keyPath(pagingScrollView.contentOffset), options: [.new, .old], context: nil)
+
         contentMode = .redraw
+    }
+
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == #keyPath(pagingScrollView.contentOffset) {
+            collectionView.contentOffset = pagingScrollView.contentOffset
+
+            let rows = collectionView.indexPathsForVisibleItems
+            for indexPath in rows {
+                applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
+            }
+        }
     }
 
     override func draw(_ rect: CGRect) {
@@ -96,18 +110,6 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
         flowLayout.sectionInset = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
         pagingScrollView.contentSize = CGSize(width: pageSize * 5, height: frame.height)
         flowLayout.scrollDirection = UICollectionViewScrollDirection.horizontal
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        //ignore collection view scrolling events
-        guard scrollView == pagingScrollView else { return }
-
-        collectionView.contentOffset = pagingScrollView.contentOffset
-
-        let rows = collectionView.indexPathsForVisibleItems
-        for indexPath in rows {
-            applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
-        }
     }
 
     private func applyTransformToCell(cell: UICollectionViewCell, indexPath: IndexPath) {
@@ -123,11 +125,6 @@ class HorizontalPagerView: UIView, UICollectionViewDelegate {
 
         let transformScaled = maxScaleToApply + amountToScaleRounded
 
-        print("index \(indexPath) x is \(amountToScaleRounded) transformScaled \(maxScaleToApply) resulting in \(transformScaled)")
         cell.contentView.layer.sublayerTransform = CATransform3DMakeScale(transformScaled, transformScaled, 1)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("selected cell \(indexPath.row)")
     }
 }
