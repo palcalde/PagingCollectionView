@@ -112,9 +112,12 @@ class HorizontalPagerView: UIView {
 
     private func didResize() {
         flowLayout.itemSize = CGSize(width: pageSize, height: frame.height)
+
         let padding = (frame.width-pageSize)/2
         flowLayout.sectionInset = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
-        pagingScrollView.contentSize = CGSize(width: pageSize * 5, height: frame.height)
+
+        let numberOfCellsItems = CGFloat(collectionView.numberOfItems(inSection: 0))
+        pagingScrollView.contentSize = CGSize(width: pageSize * numberOfCellsItems, height: frame.height)
         flowLayout.scrollDirection = UICollectionViewScrollDirection.horizontal
     }
 
