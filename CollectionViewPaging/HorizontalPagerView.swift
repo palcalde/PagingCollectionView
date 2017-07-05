@@ -1,13 +1,14 @@
 import Foundation
 import UIKit
 
-class HorizontalPagerView: UIView {
+class HorizontalPagerView: UIView, UICollectionViewDelegate {
     @objc private let pagingScrollView = UIScrollView()
 
     let collectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
 
-    var pageSize: CGFloat = 0 {
+    var pageWidth: CGFloat = 0 {
         didSet {
+            pageWidth = max(pageWidth, 0)
             didResize()
         }
     }
@@ -26,7 +27,7 @@ class HorizontalPagerView: UIView {
 
     // Range from (0..1] of reducing scale amount to apply when paging
     // Cell in the center will always have 1 (biggest)
-    var maxScaleToApply: CGFloat = 0.7 {
+    var maxScaleToApply: CGFloat = 0.8 {
         didSet {
             maxScaleToApply = min(max(maxScaleToApply, 0.1), 1.0)
         }
@@ -36,8 +37,8 @@ class HorizontalPagerView: UIView {
         return collectionView.collectionViewLayout as! UICollectionViewFlowLayout
     }
 
-    init(pageSize: CGFloat, maxScaleToApply: CGFloat = 0) {
-        self.pageSize = pageSize
+    init(pageWidth: CGFloat, maxScaleToApply: CGFloat = 0) {
+        self.pageWidth = pageWidth
         self.maxScaleToApply = maxScaleToApply
 
         super.init(frame: CGRect.zero)
@@ -49,19 +50,20 @@ class HorizontalPagerView: UIView {
         collectionView.register(nib, forCellWithReuseIdentifier: identifier)
     }
 
+    func reloadData() {
+        didResize()
+        self.collectionView.reloadData()
+    }
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
         configure()
     }
 
-    deinit {
-        removeObserver(self, forKeyPath: #keyPath(pagingScrollView.contentOffset))
-    }
-
     private func configure() {
         collectionView.backgroundColor = UIColor.clear
-        
+
         collectionView.isPagingEnabled = false
 
         flowLayout.minimumInteritemSpacing = 0
@@ -82,7 +84,9 @@ class HorizontalPagerView: UIView {
         pagingScrollView.topAnchor.constraint(equalTo: collectionView.topAnchor).isActive = true
         pagingScrollView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor).isActive = true
         pagingScrollView.leftAnchor.constraint(equalTo: collectionView.leftAnchor).isActive = true
-        pagingScrollView.widthAnchor.constraint(equalToConstant: pageSize).isActive = true
+        pagingScrollView.widthAnchor.constraint(equalToConstant: pageWidth).isActive = true
+
+        pagingScrollView.delegate = self
 
         pagingScrollView.isPagingEnabled = true
         pagingScrollView.isHidden = true
@@ -90,20 +94,7 @@ class HorizontalPagerView: UIView {
         collectionView.addGestureRecognizer(pagingScrollView.panGestureRecognizer)
         collectionView.panGestureRecognizer.isEnabled = false
 
-        addObserver(self, forKeyPath: #keyPath(pagingScrollView.contentOffset), options: [.new, .old], context: nil)
-
         contentMode = .redraw
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == #keyPath(pagingScrollView.contentOffset) {
-            collectionView.contentOffset = pagingScrollView.contentOffset
-
-            let rows = collectionView.indexPathsForVisibleItems
-            for indexPath in rows {
-                applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
-            }
-        }
     }
 
     override func draw(_ rect: CGRect) {
@@ -111,13 +102,17 @@ class HorizontalPagerView: UIView {
     }
 
     private func didResize() {
-        flowLayout.itemSize = CGSize(width: pageSize, height: frame.height)
+        flowLayout.itemSize = CGSize(width: pageWidth, height: frame.height)
 
-        let padding = (frame.width-pageSize)/2
+        let padding = (frame.width-pageWidth)/2
         flowLayout.sectionInset = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
 
-        let numberOfCellsItems = CGFloat(collectionView.numberOfItems(inSection: 0))
-        pagingScrollView.contentSize = CGSize(width: pageSize * numberOfCellsItems, height: frame.height)
+        var numberOfCellsItems = CGFloat(0)
+        if let dataSource = collectionView.dataSource {
+            numberOfCellsItems = CGFloat(dataSource.collectionView(collectionView, numberOfItemsInSection: 0))
+        }
+
+        pagingScrollView.contentSize = CGSize(width: pageWidth * numberOfCellsItems, height: frame.height)
         flowLayout.scrollDirection = UICollectionViewScrollDirection.horizontal
     }
 
@@ -135,5 +130,24 @@ class HorizontalPagerView: UIView {
         let transformScaled = maxScaleToApply + amountToScaleRounded
 
         cell.contentView.layer.sublayerTransform = CATransform3DMakeScale(transformScaled, transformScaled, 1)
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView == pagingScrollView else { return }
+
+        if scrollView == pagingScrollView {
+            collectionView.contentOffset = pagingScrollView.contentOffset
+
+            let rows = collectionView.indexPathsForVisibleItems
+            for indexPath in rows {
+                applyTransformToCell(cell: collectionView.cellForItem(at: indexPath)!, indexPath: indexPath)
+            }
+        }
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        guard scrollView == pagingScrollView else { return }
+        
+        pagingScrollView.setContentOffset(scrollView.contentOffset, animated: false)
     }
 }
